@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oliva House | Fresh Food, Beautifully Served</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #faf8f3;
+            color: #24382b;
+        }
+
+        nav {
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+        }
+
+        .logo {
+            font-family: Georgia, serif;
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        nav span {
+            color: #71816e;
+            font-size: 14px;
+        }
+
+        .hero {
+            min-height: 78vh;
+            padding: 70px 8%;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(90deg, #faf8f3 35%, #faf8f3dd 58%, transparent),
+                url("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1800&q=85")
+                center / cover;
+        }
+
+        .content {
+            max-width: 560px;
+        }
+
+        .eyebrow {
+            color: #71864b;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-family: Georgia, serif;
+            font-size: clamp(44px, 6vw, 72px);
+            line-height: 1.08;
+            margin: 20px 0;
+            font-weight: normal;
+        }
+
+        .content p {
+            color: #687166;
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 22px;
+            padding: 15px 25px;
+            background: #304b36;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 650px) {
+            nav {
+                padding: 20px 6%;
+            }
+
+            .hero {
+                padding: 65px 6%;
+                background:
+                    linear-gradient(90deg, #faf8f3f2, #faf8f3dd),
+                    url("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=85")
+                    center / cover;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Oliva House.</div>
+        <span>GOOD FOOD. GOOD MOOD.</span>
+    </nav>
+
+    <main class="hero">
+        <div class="content">
+            <div class="eyebrow">Freshly made, thoughtfully served</div>
+
+            <h1>Food that feels like home.</h1>
+
+            <p>
+                Discover comforting favourites, fresh ingredients,
+                and delicious meals made for your everyday moments.
+            </p>
+
+            <a href="#menu" class="button">Explore Our Kitchen →</a>
+        </div>
+    </main>
+</body>
+</html>
