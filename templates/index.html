@@ -4,119 +4,306 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Oliva House | Fresh Food, Beautifully Served</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #faf8f3;
-            color: #24382b;
-        }
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 
-        nav {
-            padding: 22px 8%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-        }
-
-        .logo {
-            font-family: Georgia, serif;
-            font-size: 27px;
-            font-weight: bold;
-        }
-
-        nav span {
-            color: #71816e;
-            font-size: 14px;
-        }
-
-        .hero {
-            min-height: 78vh;
-            padding: 70px 8%;
-            display: flex;
-            align-items: center;
-            background:
-                linear-gradient(90deg, #faf8f3 35%, #faf8f3dd 58%, transparent),
-                url("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1800&q=85")
-                center / cover;
-        }
-
-        .content {
-            max-width: 560px;
-        }
-
-        .eyebrow {
-            color: #71864b;
-            font-size: 12px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        h1 {
-            font-family: Georgia, serif;
-            font-size: clamp(44px, 6vw, 72px);
-            line-height: 1.08;
-            margin: 20px 0;
-            font-weight: normal;
-        }
-
-        .content p {
-            color: #687166;
-            font-size: 17px;
-            line-height: 1.8;
-        }
-
-        .button {
-            display: inline-block;
-            margin-top: 22px;
-            padding: 15px 25px;
-            background: #304b36;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 650px) {
-            nav {
-                padding: 20px 6%;
-            }
-
-            .hero {
-                padding: 65px 6%;
-                background:
-                    linear-gradient(90deg, #faf8f3f2, #faf8f3dd),
-                    url("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=85")
-                    center / cover;
-            }
-        }
-    </style>
+    <script src="{{ url_for('static', filename='js/main.js') }}"
+            defer></script>
 </head>
+
 <body>
-    <nav>
-        <div class="logo">Oliva House.</div>
-        <span>GOOD FOOD. GOOD MOOD.</span>
-    </nav>
 
-    <main class="hero">
-        <div class="content">
-            <div class="eyebrow">Freshly made, thoughtfully served</div>
+    <!-- Navigation -->
+    <header class="navbar">
+        <a href="/" class="logo">oliva<span>house.</span></a>
 
-            <h1>Food that feels like home.</h1>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#menu">Our Menu</a>
+        </nav>
 
-            <p>
-                Discover comforting favourites, fresh ingredients,
-                and delicious meals made for your everyday moments.
+        <button class="cart-button" id="cart-button" type="button">
+            <span>Bag</span>
+            <span class="cart-count" id="cart-count">0</span>
+        </button>
+        <a href="{{ url_for('track_order') }}">Track Order</a>
+    </header>
+
+    <!-- Shopping Cart and Checkout -->
+    <div class="cart-overlay" id="cart-overlay" hidden>
+        <section class="cart-panel"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="cart-title">
+
+            <div class="cart-header">
+                <h2 id="cart-title">Your Bag</h2>
+
+                <button id="close-cart"
+                        type="button"
+                        aria-label="Close cart">×</button>
+            </div>
+
+            <div id="cart-items"></div>
+
+            <p id="cart-empty">
+                Your bag is waiting for something delicious.
             </p>
 
-            <a href="#menu" class="button">Explore Our Kitchen →</a>
-        </div>
+            <div class="cart-summary">
+                <p>
+                    Subtotal
+                    <strong id="cart-subtotal">₹0</strong>
+                </p>
+
+                <button id="checkout-button" type="button">
+                    Continue to checkout
+                </button>
+            </div>
+
+            <!-- Checkout Form -->
+            <form id="checkout-form" hidden>
+                <h3>Delivery Details</h3>
+
+                <label for="customer-name">Full Name</label>
+                <input
+                    type="text"
+                    id="customer-name"
+                    name="customer_name"
+                    placeholder="Enter your full name"
+                    maxlength="100"
+                    required
+                >
+
+                <label for="customer-phone">Phone Number</label>
+                <input
+                    type="tel"
+                    id="customer-phone"
+                    name="phone"
+                    placeholder="Enter 10-digit phone number"
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                    inputmode="numeric"
+                    required
+                >
+
+                <label for="customer-address">Delivery Address</label>
+                <textarea
+                    id="customer-address"
+                    name="address"
+                    placeholder="House number, street, city..."
+                    maxlength="300"
+                    rows="3"
+                    required
+                ></textarea>
+
+                <button type="submit" id="place-order-button">
+                    Place Order
+                </button>
+            </form>
+
+        </section>
+    </div>
+
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <p class="eyebrow">GOOD FOOD, BETTER MOMENTS</p>
+
+                <h1>
+                    A little taste<br>
+                    of <em>happiness.</em>
+                </h1>
+
+                <p class="hero-description">
+                    Thoughtfully prepared meals, fresh ingredients,
+                    and flavours worth slowing down for.
+                </p>
+
+                <a href="#menu" class="primary-button">
+                    Explore our menu <span>↗</span>
+                </a>
+
+                <div class="hero-note">
+                    <span class="note-dot"></span>
+                    Made fresh. Served with love.
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <img
+                    src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1100&q=85"
+                    alt="Freshly prepared food with colourful ingredients">
+
+                <div class="image-label">
+                    <span>THE OLIVA PROMISE</span>
+                    <strong>Freshness in every bite.</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="categories section" id="categories">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">FIND YOUR FAVOURITE</p>
+                    <h2>What's on your mind?</h2>
+                </div>
+
+                <p class="section-note">
+                    A little something for every craving.
+                </p>
+            </div>
+
+            <div class="category-grid">
+                <button class="category-card active"
+                        data-category="All" type="button">
+                    <span class="category-icon">✳</span>
+                    <span>Everything</span>
+                </button>
+
+                <button class="category-card"
+                        data-category="Pizza" type="button">
+                    <span class="category-icon">🍕</span>
+                    <span>Pizza</span>
+                </button>
+
+                <button class="category-card"
+                        data-category="Burgers" type="button">
+                    <span class="category-icon">🍔</span>
+                    <span>Burgers</span>
+                </button>
+
+                <button class="category-card"
+                        data-category="Healthy" type="button">
+                    <span class="category-icon">🥗</span>
+                    <span>Healthy</span>
+                </button>
+
+                <button class="category-card"
+                        data-category="Desserts" type="button">
+                    <span class="category-icon">🍰</span>
+                    <span>Desserts</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Menu -->
+        <section class="menu-section section" id="menu">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">MADE FOR YOUR CRAVINGS</p>
+                    <h2>Little bites, big joy.</h2>
+                </div>
+
+                <label class="search-box">
+                    <span>⌕</span>
+                    <input
+                        type="search"
+                        id="menu-search"
+                        placeholder="Find something delicious..."
+                        aria-label="Search menu">
+                </label>
+            </div>
+
+            <div class="menu-grid" id="menu-grid">
+
+                {% for item in menu_items %}
+
+                <article class="food-card"
+                         data-category="{{ item.category }}">
+
+                    
+                   
+                    <div class="food-image">
+                        {% if item.image %}
+                        <img
+                            src="{{ item.image }}"
+                            alt="{{ item.name }}"
+                            loading="lazy"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';"
+                        >
+                        <div class="food-image-placeholder" style="display: none;">
+                            {{ item.category }}
+                        </div>
+                        {% else %}
+                        <div class="food-image-placeholder">
+                            {{ item.category }}
+                        </div>
+                        {% endif %}
+
+                        <span class="food-tag">{{ item.category }}</span>
+                    </div>
+
+  
+
+                    <div class="food-details">
+                        <div class="food-title-row">
+                            <h3>{{ item.name }}</h3>
+                        </div>
+
+                        <p>
+                            {{ item.description or
+                               "Freshly prepared at Oliva House." }}
+                        </p>
+
+                        <div class="food-bottom">
+                            <strong>₹{{ "%.0f"|format(item.price) }}</strong>
+
+                            <button
+                                class="add-button"
+                                type="button"
+                                data-name="{{ item.name }}"
+                                data-price="{{ item.price }}"
+                                aria-label="Add {{ item.name }} to bag">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                {% else %}
+                <p class="empty-message">
+                    No dishes available right now.
+                    Please check back soon!
+                </p>
+                {% endfor %}
+
+            </div>
+
+            <p class="empty-message" id="empty-message" hidden>
+                No dishes found. Try another search.
+            </p>
+        </section>
+
+        <!-- Closing Banner -->
+        <section class="closing-banner">
+            <p class="eyebrow">YOUR TABLE IS WAITING</p>
+
+            <h2>
+                Good things are<br>
+                always worth sharing.
+            </h2>
+
+            <a href="#menu" class="primary-button">
+                Find your next favourite ↗
+            </a>
+        </section>
+
     </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="/" class="logo">oliva<span>house.</span></a>
+        <p>Fresh food. Thoughtful moments.</p>
+        <p>© 2026 Oliva House</p>
+    </footer>
+
 </body>
 </html>

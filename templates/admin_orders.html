@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oliva House | Admin Orders</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body {
+            background: #f7f7f0;
+        }
+
+        .admin-container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 24px;
+        }
+
+        .admin-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .admin-heading h1 {
+            color: #344b35;
+            margin-bottom: 8px;
+        }
+
+        .back-link {
+            color: #344b35;
+            text-decoration: none;
+        }
+
+        .order-card {
+            background: white;
+            border: 1px solid #e5e7df;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 14px;
+        }
+
+        .order-details {
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .order-items {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-total {
+            color: #344b35;
+            font-size: 19px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #f1eddb;
+            color: #655426;
+        }
+
+        .empty-orders {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .admin-container {
+                margin: 20px auto;
+                padding: 16px;
+            }
+
+            .order-card {
+                padding: 16px;
+            }
+        }
+        
+        .order-details {
+            margin-top: 24px;
+            padding: 20px;
+            background: #fbfbf7;
+            border: 1px solid #e8e8df;
+            border-radius: 12px;
+                text-align: left;
+            }
+
+            .order-details h2 {
+                margin-top: 0;
+                color: #344b35;
+            }
+
+            .order-details h3 {
+                margin-top: 22px;
+                color: #344b35;
+            }
+
+            .ordered-item {
+                display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e8e8df;
+        }
+
+        .ordered-item:last-child {
+            border-bottom: none;
+        }
+        .order-progress {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+    gap: 5px;
+}
+
+.progress-step {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+}
+
+.progress-circle {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: #e5e5e5;
+    color: #666;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+}
+
+.progress-step.completed {
+    color: #344b35;
+    font-weight: bold;
+}
+
+.progress-step.completed .progress-circle {
+    background: #344b35;
+    color: white;
+}
+
+.cancelled {
+    background: #fce8e6;
+    color: #b42318;
+}
+
+    </style>
+</head>
+
+<body>
+    <main class="admin-container">
+        <div class="admin-heading">
+            <div>
+                <p class="eyebrow">OLIVA HOUSE MANAGEMENT</p>
+                <h1>Customer Orders</h1>
+                <p>Review orders received by your restaurant.</p>
+            </div>
+
+            <a class="back-link" href="/">← Back to website</a>
+        </div>
+
+        {% if orders %}
+            {% for order in orders %}
+            <article class="order-card">
+                <div class="order-top">
+                    <div>
+                        <h2>Order #{{ order.id }}</h2>
+                        <p>{{ order.created_at }}</p>
+                    </div>
+
+                    
+<form
+    action="{{ url_for('update_order_status', order_id=order.id) }}"
+    method="POST"
+    class="status-form"
+>
+    <label for="status-{{ order.id }}">Order status:</label>
+
+    <select id="status-{{ order.id }}" name="status">
+        {% for status_option in [
+            "Pending",
+            "Preparing",
+            "Out for Delivery",
+            "Delivered",
+            "Cancelled"
+        ] %}
+        <option
+            value="{{ status_option }}"
+            {% if order.status == status_option %}selected{% endif %}
+        >
+            {{ status_option }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Update Status</button>
+</form>
+
+                </div>
+
+                <div class="order-details">
+                    <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    <p><strong>Delivery address:</strong> {{ order.address }}</p>
+                </div>
+
+                <div class="order-items">
+                    <h3>Ordered Items</h3>
+
+                    {% for item in order.items %}
+                    <p>
+                        {{ item.item_name }} × {{ item.quantity }}
+                        — ₹{{ "%.2f"|format(item.price * item.quantity) }}
+                    </p>
+                    {% endfor %}
+                </div>
+
+                <p class="order-total">
+                    <strong>Total: ₹{{ "%.2f"|format(order.total_amount) }}</strong>
+                </p>
+            </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-orders">
+                <h2>No orders yet</h2>
+                <p>Customer orders will appear here after checkout.</p>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

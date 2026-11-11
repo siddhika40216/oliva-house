@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order | Oliva House</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #f7f7f0;
+            font-family: Arial, sans-serif;
+            padding: 20px 0;
+        }
+
+        .tracking-card {
+            width: min(90%, 480px);
+            box-sizing: border-box;
+            padding: 32px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(0,0,0,.07);
+        }
+
+        h1, h2 {
+            color: #344b35;
+        }
+
+        label {
+            display: block;
+            margin: 18px 0 8px;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9dfd2;
+            border-radius: 8px;
+        }
+
+        button, .home-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 13px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #344b35;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+        }
+
+        .error {
+            color: #b42318;
+        }
+
+        .status {
+            padding: 12px;
+            background: #e5efe1;
+            border-radius: 8px;
+            color: #344b35;
+            font-weight: bold;
+        }
+
+        .ordered-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e8e8df;
+        }
+        .order-progress {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+    gap: 5px;
+}
+
+.progress-step {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: #999;
+}
+
+.progress-circle {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: #e5e5e5;
+    color: #666;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+}
+
+.progress-step.completed {
+    color: #344b35;
+    font-weight: bold;
+}
+
+.progress-step.completed .progress-circle {
+    background: #344b35;
+    color: white;
+}
+
+.cancelled {
+    background: #fce8e6;
+    color: #b42318;
+}
+    </style>
+</head>
+
+<body>
+    <main class="tracking-card">
+        <p>OLIVA HOUSE</p>
+        <h1>Track Your Order</h1>
+        <p>Enter your order number and registered phone number.</p>
+
+        <form method="POST">
+            <label for="order_id">Order Number</label>
+            <input
+                type="number"
+                id="order_id"
+                name="order_id"
+                min="1"
+                value="{{ request.form.get('order_id', '') }}"
+                required
+            >
+
+            <label for="phone">Registered Phone Number</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                value="{{ request.form.get('phone', '') }}"
+                placeholder="10-digit phone number"
+                required
+            >
+
+            <button type="submit">Track Order</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if order %}
+            <section>
+                <h2>Order #{{ order.id }}</h2>
+                {% if order.status == "Cancelled" %}
+    <p class="status cancelled">
+        This order has been cancelled.
+    </p>
+{% else %}
+    <p class="status">
+        Current Status: {{ order.status }}
+    </p>
+
+    {% set statuses = [
+        "Pending",
+        "Preparing",
+        "Out for Delivery",
+        "Delivered"
+    ] %}
+
+    {% set current_step = statuses.index(order.status)
+       if order.status in statuses else 0 %}
+
+    <div class="order-progress">
+        {% for status in statuses %}
+            <div class="progress-step
+                {% if loop.index0 <= current_step %}completed{% endif %}">
+
+                <div class="progress-circle">
+                    {% if loop.index0 < current_step %}
+                        ✓
+                    {% else %}
+                        {{ loop.index }}
+                    {% endif %}
+                </div>
+
+                <span>{{ status }}</span>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+                <h3>Items Ordered</h3>
+
+                {% for item in order.items %}
+                    <div class="ordered-item">
+                        <span>{{ item.item_name }} × {{ item.quantity }}</span>
+                        <span>
+                            ₹{{ "%.2f"|format(item.price * item.quantity) }}
+                        </span>
+                    </div>
+                {% endfor %}
+
+                <p>
+                    <strong>Total:</strong>
+                    ₹{{ "%.2f"|format(order.total_amount) }}
+                </p>
+            </section>
+        {% endif %}
+
+        <a href="/" class="home-link">Back to Home</a>
+    </main>
+</body>
+</html>
