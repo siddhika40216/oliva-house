@@ -824,3 +824,17 @@ h1 em {
     color: #333;
     font-size: 14px;
 }
+.remove-cart-item {
+    background: transparent;
+    color: #a33b32;
+    border: 1px solid #a33b32;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.remove-cart-item:hover {
+    background: #a33b32;
+    color: white;
+}

@@ -113,7 +113,7 @@ def admin_logout():
 def place_order():
     data = request.get_json(silent=True)
 
-    if not data:
+    if not isinstance(data, dict):
         return jsonify({"error": "Invalid order data."}), 400
 
     customer_name = str(data.get("customer_name", "")).strip()
@@ -138,8 +138,11 @@ def place_order():
     total_amount = 0
 
     for cart_item in cart_items:
-        name = str(cart_item.get("name", "")).strip()
 
+        if not isinstance(cart_item, dict):
+            return jsonify({"error": "Invalid cart item."}), 400
+
+        name = str(cart_item.get("name", "")).strip()
         try:
             quantity = int(cart_item.get("quantity", 0))
         except (ValueError, TypeError):

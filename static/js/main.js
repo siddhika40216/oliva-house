@@ -109,9 +109,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 changeQuantity(item.name, 1);
             });
 
-            quantityControls.append(minus, quantity, plus);
-            row.append(details, quantityControls);
-            cartItemsContainer.append(row);
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.textContent = "Remove";
+            removeButton.className = "remove-cart-item";
+
+            removeButton.addEventListener("click", () => {
+                delete cart[item.name];
+                renderCart();
+            });
+
+quantityControls.append(minus, quantity, plus);
+row.append(details, quantityControls, removeButton);
+cartItemsContainer.append(row);
         });
 
         cartCount.textContent = totalItems;

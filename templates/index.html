@@ -161,37 +161,37 @@
                 </p>
             </div>
 
-            <div class="category-grid">
-                <button class="category-card active"
-                        data-category="All" type="button">
-                    <span class="category-icon">✳</span>
-                    <span>Everything</span>
-                </button>
+            
+<div class="category-grid">
 
-                <button class="category-card"
-                        data-category="Pizza" type="button">
-                    <span class="category-icon">🍕</span>
-                    <span>Pizza</span>
-                </button>
+    <button class="category-card active"
+            data-category="All" type="button">
+        <span class="category-icon">✳</span>
+        <span>Everything</span>
+    </button>
 
-                <button class="category-card"
-                        data-category="Burgers" type="button">
-                    <span class="category-icon">🍔</span>
-                    <span>Burgers</span>
-                </button>
+    {% set category_icons = {
+        'Pizza': '🍕',
+        'Burgers': '🍔',
+        'Healthy': '🥗',
+        'Desserts': '🍰',
+        'Mocktails': '🥤',
+        'Starters': '🍟',
+        'Main Course': '🍽️'
+    } %}
 
-                <button class="category-card"
-                        data-category="Healthy" type="button">
-                    <span class="category-icon">🥗</span>
-                    <span>Healthy</span>
-                </button>
+    {% for category in menu_items | map(attribute='category') | unique | list %}
+    <button class="category-card"
+            data-category="{{ category }}" type="button">
+        <span class="category-icon">
+            {{ category_icons.get(category, '🍽️') }}
+        </span>
+        <span>{{ category }}</span>
+    </button>
+    {% endfor %}
 
-                <button class="category-card"
-                        data-category="Desserts" type="button">
-                    <span class="category-icon">🍰</span>
-                    <span>Desserts</span>
-                </button>
-            </div>
+</div>
+
         </section>
 
         <!-- Menu -->

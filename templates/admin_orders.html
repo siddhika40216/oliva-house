@@ -14,6 +14,8 @@
             background: #f7f7f0;
         }
 
+
+
         .admin-container {
             max-width: 1100px;
             margin: 50px auto;
@@ -38,6 +40,26 @@
             color: #344b35;
             text-decoration: none;
         }
+        .admin-nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.admin-nav a {
+    text-decoration: none;
+    color: white;
+    background: #344b35;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.admin-nav a:hover {
+    background: #263a28;
+}
 
         .order-card {
             background: white;
@@ -140,7 +162,10 @@
                 <p>Review orders received by your restaurant.</p>
             </div>
 
+            <div class="admin-nav">
+            <a href="{{ url_for('admin_menu') }}">Manage Menu</a>
             <a class="back-link" href="/">← Back to website</a>
+            </div>
         </div>
 
         {% if orders %}
@@ -154,7 +179,7 @@
                             {{ order.placed_at.strftime("%d %b %Y, %I:%M %p")
                             if order.placed_at else "Not available" }}
                         </p>
-        </div>
+                </div>
 
                     
 <form
