@@ -104,6 +104,19 @@
         <strong>Order Status:</strong>
         {{ order.status }}
     </p>
+    <div class="order-time-details">
+    <p>
+        <strong>Order Placed:</strong>
+        {{ order.placed_at.strftime("%d %b %Y, %I:%M %p")
+           if order.placed_at else "Not available" }}
+    </p>
+
+    <p>
+        <strong>Estimated Delivery:</strong>
+        {{ order.estimated_delivery.strftime("%d %b %Y, %I:%M %p")
+           if order.estimated_delivery else "Not available" }}
+    </p>
+</div>
 
     <h3>Items Ordered</h3>
 

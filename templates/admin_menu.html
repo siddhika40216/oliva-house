@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Menu | Oliva House</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f5f7f2;
+            color: #263628;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #344b35;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: white;
+            background: #344b35;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-left: 6px;
+            display: inline-block;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #344b35;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 75px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        button {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .save-btn {
+            background: #344b35;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #777;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .error {
+            color: #b42318;
+            margin-bottom: 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-details h3 {
+            margin: 0 0 7px;
+        }
+
+        .item-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .item-image {
+            width: 85px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 7px;
+        }
+
+        .available {
+            color: #287a3d;
+            font-weight: bold;
+        }
+
+        .unavailable {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .edit-btn {
+            background: #e5edf7;
+            color: #24466b;
+            text-decoration: none;
+            padding: 10px 13px;
+            border-radius: 6px;
+        }
+
+        .toggle-btn {
+            background: #e9f2e6;
+            color: #315d35;
+        }
+
+        .delete-btn {
+            background: #fbe8e7;
+            color: #a52a2a;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>Oliva House - Manage Menu</h1>
+
+        <div class="links">
+            <a href="/admin/orders">View Orders</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>{{ "Edit Food Item" if item else "Add New Food Item" }}</h2>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST"
+              action="{{ '/admin/menu/edit/' ~ item.id if item else '/admin/menu' }}">
+
+            <div class="form-grid">
+
+                <input type="text"
+                       name="name"
+                       placeholder="Food Item Name"
+                       value="{{ item.name if item else '' }}"
+                       required>
+
+                <input type="text"
+                       name="category"
+                       placeholder="Category (e.g. Pizza, Drinks)"
+                       value="{{ item.category if item else '' }}"
+                       required>
+
+                <input type="number"
+                       name="price"
+                       placeholder="Price"
+                       min="0.01"
+                       step="0.01"
+                       value="{{ item.price if item else '' }}"
+                       required>
+
+                <input type="url"
+                       name="image"
+                       placeholder="Food Image URL"
+                       value="{{ item.image if item else '' }}">
+
+                <textarea class="full-width"
+                          name="description"
+                          placeholder="Food Description">{{ item.description if item else '' }}</textarea>
+
+                <div class="full-width">
+                    <button type="submit" class="save-btn">
+                        {{ "Update Item" if item else "Add Food Item" }}
+                    </button>
+
+                    {% if item %}
+                        <a href="/admin/menu" class="cancel-btn">Cancel</a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Existing Menu Items ({{ items|length }})</h2>
+
+        {% for food in items %}
+
+            <div class="menu-item">
+
+                {% if food.image %}
+                    <img src="{{ food.image }}"
+                         alt="{{ food.name }}"
+                         class="item-image">
+                {% endif %}
+
+                <div class="item-details">
+                    <h3>{{ food.name }}</h3>
+                    <p>{{ food.description }}</p>
+                    <p>Category: {{ food.category }}</p>
+                    <p>Price: ₹{{ "%.2f"|format(food.price) }}</p>
+
+                    {% if food.available %}
+                        <span class="available">Available</span>
+                    {% else %}
+                        <span class="unavailable">Unavailable</span>
+                    {% endif %}
+                </div>
+
+                <div class="actions">
+
+                    <a href="/admin/menu/edit/{{ food.id }}"
+                       class="edit-btn">Edit</a>
+
+                    <form method="POST"
+                          action="/admin/menu/toggle/{{ food.id }}">
+                        <button type="submit" class="toggle-btn">
+                            {{ "Disable" if food.available else "Enable" }}
+                        </button>
+                    </form>
+
+                    <form method="POST"
+                          action="/admin/menu/delete/{{ food.id }}"
+                          onsubmit="return confirm('Are you sure you want to delete this food item?');">
+                        <button type="submit" class="delete-btn">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        {% else %}
+            <p>No food items found. Add your first food item above.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+</body>
+</html>

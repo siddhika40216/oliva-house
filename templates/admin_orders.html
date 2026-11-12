@@ -127,46 +127,6 @@
         .ordered-item:last-child {
             border-bottom: none;
         }
-        .order-progress {
-    display: flex;
-    justify-content: space-between;
-    margin: 30px 0;
-    gap: 5px;
-}
-
-.progress-step {
-    flex: 1;
-    text-align: center;
-    font-size: 11px;
-    color: #999;
-}
-
-.progress-circle {
-    width: 30px;
-    height: 30px;
-    margin: 0 auto 8px;
-    border-radius: 50%;
-    background: #e5e5e5;
-    color: #666;
-    display: grid;
-    place-items: center;
-    font-weight: bold;
-}
-
-.progress-step.completed {
-    color: #344b35;
-    font-weight: bold;
-}
-
-.progress-step.completed .progress-circle {
-    background: #344b35;
-    color: white;
-}
-
-.cancelled {
-    background: #fce8e6;
-    color: #b42318;
-}
 
     </style>
 </head>
@@ -189,8 +149,12 @@
                 <div class="order-top">
                     <div>
                         <h2>Order #{{ order.id }}</h2>
-                        <p>{{ order.created_at }}</p>
-                    </div>
+                        <p>
+                            <strong>Order Date:</strong>
+                            {{ order.placed_at.strftime("%d %b %Y, %I:%M %p")
+                            if order.placed_at else "Not available" }}
+                        </p>
+        </div>
 
                     
 <form
@@ -221,6 +185,19 @@
 </form>
 
                 </div>
+                <div class="order-time-details">
+    <p>
+        <strong>Order Placed:</strong>
+        {{ order.placed_at.strftime("%d %b %Y, %I:%M %p")
+           if order.placed_at else "Not available" }}
+    </p>
+
+    <p>
+        <strong>Estimated Delivery:</strong>
+        {{ order.estimated_delivery.strftime("%d %b %Y, %I:%M %p")
+           if order.estimated_delivery else "Not available" }}
+    </p>
+</div>
 
                 <div class="order-details">
                     <p><strong>Customer:</strong> {{ order.customer_name }}</p>

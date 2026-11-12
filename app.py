@@ -2,6 +2,8 @@
 from flask import Flask, render_template, request, jsonify,redirect,session
 from flask_sqlalchemy import SQLAlchemy
 import os
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 app.secret_key = os.environ.get(
@@ -32,6 +34,8 @@ class MenuItem(db.Model):
 
 class CustomerOrder(db.Model):
     __tablename__ = "customer_orders"
+    placed_at = db.Column(db.DateTime, nullable=True)
+    estimated_delivery = db.Column(db.DateTime, nullable=True)
 
     id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String(100), nullable=False)
@@ -159,14 +163,20 @@ def place_order():
         total_amount += line_total
 
         order_lines.append((menu_item, quantity))
+    placed_time = datetime.now(
+    ZoneInfo("Asia/Kolkata")
+    ).replace(tzinfo=None)
 
+    delivery_time = placed_time + timedelta(minutes=45)
     try:
         order = CustomerOrder(
             customer_name=customer_name,
             phone=phone,
             address=address,
             total_amount=round(total_amount, 2),
-            status="Pending"
+            status="Pending",
+            placed_at=placed_time,
+            estimated_delivery=delivery_time,
         )
 
         db.session.add(order)
@@ -236,6 +246,138 @@ def update_order_status(order_id):
 
     return redirect("/admin/orders")
 
+@app.route("/admin/menu", methods=["GET", "POST"])
+def admin_menu():
+    if not session.get("is_admin"):
+        return redirect("/admin/login")
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
+        category = request.form.get("category", "").strip()
+        image = request.form.get("image", "").strip()
+
+        try:
+            price = float(request.form.get("price", "0"))
+        except ValueError:
+            price = 0
+
+        if not name or not category or price <= 0:
+            items = MenuItem.query.order_by(MenuItem.category).all()
+            return render_template(
+                "admin_menu.html",
+                items=items,
+                item=None,
+                error="Please enter a valid name, category and price."
+            )
+
+        new_item = MenuItem(
+            name=name,
+            description=description,
+            price=price,
+            category=category,
+            image=image,
+            available=True
+        )
+
+        db.session.add(new_item)
+        db.session.commit()
+
+        return redirect("/admin/menu")
+
+    items = MenuItem.query.order_by(MenuItem.category, MenuItem.name).all()
+
+    return render_template(
+        "admin_menu.html",
+        items=items,
+        item=None
+    )
+
+
+@app.route("/admin/menu/edit/<int:item_id>", methods=["GET", "POST"])
+def edit_menu_item(item_id):
+    if not session.get("is_admin"):
+        return redirect("/admin/login")
+
+    item = db.session.get(MenuItem, item_id)
+
+    if item is None:
+        return "Menu item not found", 404
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        description = request.form.get("description", "").strip()
+        category = request.form.get("category", "").strip()
+        image = request.form.get("image", "").strip()
+
+        try:
+            price = float(request.form.get("price", "0"))
+        except ValueError:
+            price = 0
+
+        if not name or not category or price <= 0:
+            items = MenuItem.query.order_by(MenuItem.category).all()
+            return render_template(
+                "admin_menu.html",
+                items=items,
+                item=item,
+                error="Please enter a valid name, category and price."
+            )
+
+        item.name = name
+        item.description = description
+        item.price = price
+        item.category = category
+        item.image = image
+
+        db.session.commit()
+
+        return redirect("/admin/menu")
+
+    items = MenuItem.query.order_by(MenuItem.category).all()
+
+    return render_template(
+        "admin_menu.html",
+        items=items,
+        item=item
+    )
+
+
+@app.route("/admin/menu/toggle/<int:item_id>", methods=["POST"])
+def toggle_menu_item(item_id):
+    if not session.get("is_admin"):
+        return redirect("/admin/login")
+
+    item = db.session.get(MenuItem, item_id)
+
+    if item is None:
+        return "Menu item not found", 404
+
+    item.available = not item.available
+    db.session.commit()
+
+    return redirect("/admin/menu")
+
+
+@app.route("/admin/menu/delete/<int:item_id>", methods=["POST"])
+def delete_menu_item(item_id):
+    if not session.get("is_admin"):
+        return redirect("/admin/login")
+
+    item = db.session.get(MenuItem, item_id)
+
+    if item is None:
+        return "Menu item not found", 404
+
+    # Preserve old order details when deleting a menu item.
+    OrderItem.query.filter_by(menu_item_id=item.id).update({
+        "menu_item_id": None
+    })
+
+    db.session.delete(item)
+    db.session.commit()
+
+    return redirect("/admin/menu")
 
 @app.route("/track-order", methods=["GET", "POST"])
 def track_order():

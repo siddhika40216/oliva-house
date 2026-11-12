@@ -120,6 +120,19 @@
     background: #fce8e6;
     color: #b42318;
 }
+.order-time-details {
+    background: #f4f7f2;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 4px solid #344b35;
+}
+
+.order-time-details p {
+    margin: 8px 0;
+    color: #333;
+    font-size: 14px;
+}
     </style>
 </head>
 
@@ -162,26 +175,41 @@
         {% if order %}
             <section>
                 <h2>Order #{{ order.id }}</h2>
-                {% if order.status == "Cancelled" %}
-    <p class="status cancelled">
-        This order has been cancelled.
-    </p>
-{% else %}
-    <p class="status">
-        Current Status: {{ order.status }}
+                <div class="order-time-details">
+
+    <p>
+        <strong>Order Placed:</strong>
+        {{ order.placed_at.strftime("%d %b %Y, %I:%M %p")
+           if order.placed_at else "Not available" }}
     </p>
 
-    {% set statuses = [
+    <p>
+        <strong>Estimated Delivery:</strong>
+        {{ order.estimated_delivery.strftime("%d %b %Y, %I:%M %p")
+           if order.estimated_delivery else "Not available" }}
+    </p>
+
+</div>
+        {% if order.status == "Cancelled" %}
+        <p class="status cancelled">
+        This order has been cancelled.
+        </p>
+        {% else %}
+        <p class="status">
+            Current Status: {{ order.status }}
+        </p>
+
+        {% set statuses = [
         "Pending",
         "Preparing",
         "Out for Delivery",
         "Delivered"
-    ] %}
+        ] %}
 
-    {% set current_step = statuses.index(order.status)
+        {% set current_step = statuses.index(order.status)
        if order.status in statuses else 0 %}
 
-    <div class="order-progress">
+        <div class="order-progress">
         {% for status in statuses %}
             <div class="progress-step
                 {% if loop.index0 <= current_step %}completed{% endif %}">

@@ -810,3 +810,17 @@ h1 em {
 .track-order-btn:hover {
     background-color: #183525;
 }
+
+.order-time-details {
+    background: #f4f7f2;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #344b35;
+}
+
+.order-time-details p {
+    margin: 7px 0;
+    color: #333;
+    font-size: 14px;
+}
