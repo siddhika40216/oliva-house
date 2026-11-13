@@ -838,3 +838,125 @@ h1 em {
     background: #a33b32;
     color: white;
 }
+
+
+/* Final responsive improvements */
+
+/* Prevent horizontal overflow */
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Tablet layout */
+@media (max-width: 1000px) {
+    .navbar {
+        padding: 0 4%;
+    }
+
+    .nav-links {
+        gap: 18px;
+    }
+
+    .hero {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 650px) {
+    .navbar {
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 14px 5%;
+    }
+
+    .cart-button {
+        padding: 8px 11px;
+        font-size: 12px;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-image,
+    .hero-image > img {
+        width: 100%;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .category-card:last-child {
+        grid-column: auto;
+    }
+
+    .section-heading {
+        width: 100%;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cart-panel {
+        width: 100%;
+        padding: 18px;
+    }
+
+    .cart-item {
+        flex-wrap: wrap;
+    }
+
+    .quantity-controls {
+        flex-wrap: wrap;
+    }
+
+    .remove-cart-item {
+        margin-left: auto;
+    }
+
+    .status-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .status-form select,
+    .status-form button {
+        width: 100%;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 380px) {
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .food-image {
+        height: 200px;
+    }
+
+    .logo {
+        font-size: 21px;
+    }
+
+    .hero h1 {
+        font-size: 43px;
+    }
+
+    .cart-item {
+        gap: 8px;
+    }
+}

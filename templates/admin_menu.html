@@ -201,10 +201,11 @@
     <div class="header">
         <h1>Oliva House - Manage Menu</h1>
 
-        <div class="links">
-            <a href="/admin/orders">View Orders</a>
-            <a href="/admin/logout">Logout</a>
-        </div>
+       <div class="links">
+        <a href="/">Back to Website</a>
+        <a href="/admin/orders">View Orders</a>
+        <a href="/admin/logout">Logout</a>
+       </div>
     </div>
 
     <div class="panel">
@@ -264,10 +265,20 @@
 
     <div class="panel">
         <h2>Existing Menu Items ({{ items|length }})</h2>
-
+        <input
+    type="text"
+    id="menu-admin-search"
+    placeholder="Search food items by name or category..."
+    style="margin-bottom: 20px;">
+     <p id="admin-empty-search" style="display: none; color: #777;">
+    No matching menu items found.
+    </p>
+    
         {% for food in items %}
 
-            <div class="menu-item">
+            <div class="menu-item"
+            data-name="{{ food.name|lower }}"
+            data-category="{{ food.category|lower }}">
 
                 {% if food.image %}
                     <img src="{{ food.image }}"
@@ -319,5 +330,30 @@
     </div>
 
 </div>
+<script>
+    const searchInput = document.getElementById("menu-admin-search");
+    const menuItems = document.querySelectorAll(".menu-item");
+    const emptyMessage = document.getElementById("admin-empty-search");
+
+    searchInput.addEventListener("input", function () {
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        menuItems.forEach(function (item) {
+            const name = item.dataset.name;
+            const category = item.dataset.category;
+
+            if (name.includes(searchText) || category.includes(searchText)) {
+                item.style.display = "flex";
+            } else {
+                item.style.display = "none";
+            }
+        });
+        const visibleItems = Array.from(menuItems).filter(
+    item => item.style.display !== "none"
+).length;
+
+emptyMessage.style.display = visibleItems === 0 ? "block" : "none";
+    });
+</script>
 </body>
 </html>
